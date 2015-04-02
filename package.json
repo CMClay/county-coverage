@@ -1,5 +1,9 @@
 {
-  "name": "coverage",
+  "name": "county-coverage",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/CMClay/county-coverage.git"
+  },
   "version": "0.0.0",
   "description": "",
   "main": "getCoverage.js",
