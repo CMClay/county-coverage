@@ -17,5 +17,8 @@
     "commander": "^2.7.1",
     "http-server": "^0.8.0",
     "agenda": "^0.6.28"
+  },
+  "bin": {
+    "coverage": "./bin/init"
   }
 }
