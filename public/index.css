@@ -1,0 +1,19 @@
+.counties {
+  fill: #9ecae1;
+}
+
+.states {
+  fill: none;
+  stroke: #fff;
+  stroke-linejoin: round;
+}
+
+.county:hover {
+  fill: #000;
+}
+
+.q0 { fill: #9ecae1; }
+.q1 { fill: #6baed6; }
+.q2 { fill: #3182bd; }
+.q3 { fill: #08519c; }
+.q4 { fill: #045a8d; }

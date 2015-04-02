@@ -1,0 +1,21 @@
+{
+  "name": "coverage",
+  "version": "0.0.0",
+  "description": "",
+  "main": "getCoverage.js",
+  "scripts": {
+    "test": "node_modules/.bin/mocha --timeout 10000 --ui qunit --reporter spec test/*.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongoskin": "^1.4.12",
+    "underscore": "^1.8.2",
+    "tsv": "^0.2.0",
+    "async": "^0.9.0",
+    "mocha": "^2.2.1",
+    "commander": "^2.7.1",
+    "http-server": "^0.8.0",
+    "agenda": "^0.6.28"
+  }
+}

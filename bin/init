@@ -1,0 +1,69 @@
+#!/usr/bin/env node
+
+var app = require('commander');
+var Cache = require('../lib/db')
+var writeCSV = require('../lib/utils').writeCSV
+var sortData = require('../lib/utils').sortData
+var colName = require('../lib/utils').colName
+var async = require('async')
+var Agenda = require('agenda')
+
+app
+  .version('0.0.1')
+  .option('--cron [time]', 'human readable time schedule eg. "4 hours"')
+  .option('--dsn [dsn]', 'mongo dsn')
+  .option('--limit [num]', 'property limit per vendor', parseInt)
+  .option('--out [path]', 'output path for csv file')
+  .parse(process.argv)
+
+
+var limit = 1000
+var out = app.out || 'fips.csv'
+var dsn = process.env.MONGO_PATH || app.dsn
+if (!dsn) throw new Error('Mongo dsn required')
+
+function createCSV(job, done){
+  var opts = {}
+  opts.limit = app.limit || limit
+  opts.dsn = dsn
+
+  var db = new Cache(opts)
+
+  db.createCollection(function(){
+    db.getCollections(function(err, collections) {
+      async.each(collections, function(collection, callback){
+        var vendor = colName(collection)
+        db.getProperties(collection, function(err, properties){
+          console.log('Fetching fips data from: ' + collection + '...')
+          async.each(properties, function(p, cb){
+            if (!p.Latitude || !p.Longitude) return cb()
+            db.checkCache(p.Latitude, p.Longitude, vendor, function(err, fips){
+              if (err) return cb(err)
+              cb()
+            })
+          }, function(err){
+            if (err) console.log(err)
+            console.log(collection + ' done.')
+            callback()
+          })
+        })
+      }, function csv(){
+        db.getCache(function(err, result){
+          var data = sortData(result)
+          writeCSV(data, out, function(){
+            !!done ? done() : process.exit(0)
+          })
+        });
+      })
+    })
+  })
+}
+
+if (app.cron){
+  var agenda = new Agenda({db:{address:dsn}})
+  agenda.define('creat csv', createCSV)
+  agenda.every(app.cron, 'creat csv')
+  agenda.start()
+} else{
+  createCSV()
+}
